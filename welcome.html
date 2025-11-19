@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-size: cover;
+        background-color: #3cbdf3;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column; /* image en haut, texte en bas */
+        align-items: center;
+        justify-content: center;
+        max-width: 1200px;
+        margin: auto;
+        padding-top: 50px;
+        gap: 30px;
+    }
+
+    .image-block {
+        width: 90%;
+    }
+
+    .image-block img {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+    }
+
+    .text-block {
+        width: 90%;
+        color: white;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 50px;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    .btn {
+        margin-top:20px;
+        background:white;
+        color:#0b6aa8;
+        border-radius:14px;
+        padding:14px 22px;
+        font-weight:600;
+        border:none;
+        cursor:pointer;
+        box-shadow:0 6px 18px rgba(3,49,75,0.12);
+		margin-bottom: 20px;
+    }
+
+    /* Modal scratch card */
+    .modal {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.5);
+        visibility: hidden;
+        opacity: 0;
+        transition: all .2s ease;
+    }
+    .modal.show { visibility: visible; opacity: 1; }
+
+    .card-wrap {
+        background:white;
+        border-radius:12px;
+        padding:18px;
+        width:700px;
+        max-width: 90%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:12px;
+        box-shadow:0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    .card-header {
+        font-size:30px;
+        font-weight:700;
+        color:#1cb7e5;
+    }
+    .close {
+        position:absolute;
+        top:18px;
+        right:18px;
+        background:#fff;
+        border-radius:10px;
+        border:none;
+        padding:8px;
+        cursor:pointer;
+    }
+    .hint {
+        font-size:13px;
+        color:#6b7d8a;
+    }
+
+    /* Scratch area */
+    .scratch-area {
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+    }
+    #hiddenImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+    canvas#scratchLayer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+    }
+
+    @media (max-width: 900px) {
+        h1 { font-size: 36px; }
+        p { font-size: 16px; }
+    }
+
+</style>
+</head>
+<body>
+
+<div id="welcomePopup" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+">
+    <h1 style="font-size: 40px; text-align: center; margin-bottom: 20px;">Bienvenue Mon Amour ! </h1>
+    <p style="font-size: 20px; text-align: center; margin-bottom: 30px;">Clique sur le bouton pour entrer</p>
+    <button id="enterBtn" style="
+        background:white;
+        color:#0b6aa8;
+        border-radius:14px;
+        padding:14px 30px;
+        font-weight:600;
+        border:none;
+        cursor:pointer;
+        font-size:18px;
+    ">Entrer</button>
+</div>
+
+
+
+<audio id="musique" autoplay muted>
+    <source src="happy-birthday-254480.mp3" type="audio/mp3">
+</audio>
+
+<div class="container">
+    <div class="image-block">
+        <img src="img_back.png" alt="Image de fond">
+    </div>
+
+    <div class="text-block">
+        <h1>JOYEUX ANNIVERSAIRE <br>MON HOMME D'AMOUR</h1>
+        <p>
+            Joyeux 35e anniversaire à l’humain que mon cœur a choisi. Merci de rendre ma vie plus belle chaque jour. <br/>Que Dieu t’accorde tout ce que tu désires. Santé … mais pas des pieds ! 
+        </p>
+        <button class="btn" id="openBtn" onclick="launchConfettiSides()">Découvre ton cadeau</button>
+    </div>
+</div>
+
+<!-- Modal scratch card -->
+<div id="modal" class="modal" aria-hidden="true">
+    <div class="card-wrap" role="dialog" aria-modal="true" aria-label="Carte à gratter">
+        <button class="close" id="closeBtn">✕</button>
+        <div class="card-header">GRATTE POUR DECOUVRIR TON CADEAU</div>
+        <div class="scratch-area">
+            <img id="hiddenImage" src="gift.png" alt="Ton cadeau">
+            <canvas id="scratchLayer"></canvas>
+        </div>
+        <div class="hint">Utilise ta souris ou ton doigt pour gratter</div>
+    </div>
+</div>
+<script>
+const popup = document.getElementById('welcomePopup');
+const enterBtn = document.getElementById('enterBtn');
+const music = document.getElementById('musique');
+
+enterBtn.addEventListener('click', () => {
+    popup.style.display = 'none';      // Masquer le popup
+    music.muted = false;               // Débloquer le son
+    music.play();                       // Lancer la musique
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+<script>
+// Confettis
+function launchConfettiSides() {
+    const duration = 1200;
+    const end = Date.now() + duration;
+    (function frame() {
+        confetti({ particleCount: 30, startVelocity: 50, spread: 30, gravity: 0.8, origin: { x: 0, y: Math.random() }});
+        confetti({ particleCount: 30, startVelocity: 50, spread: 30, gravity: 0.8, origin: { x: 1, y: Math.random() }});
+    }());
+}
+function sideConfettiLoop() {
+    confetti({ particleCount: 150, angle: 70, spread: 60, startVelocity: 50, gravity: 0.7, origin: { x: 0, y: 0.5 }});
+    confetti({ particleCount: 150, angle: 110, spread: 60, startVelocity: 50, gravity: 0.7, origin: { x: 1, y: 0.5 }});
+    setTimeout(sideConfettiLoop, 900);
+}
+window.onload = sideConfettiLoop;
+
+function rain() { confetti({ particleCount: 10, spread: 50, origin: { x: Math.random() }}); }
+setInterval(rain, 150);
+
+
+
+// Modal + Scratch
+document.addEventListener('click', ()=>{ document.getElementById('musique').muted=false; document.getElementById('musique').play(); });
+const openBtn = document.getElementById('openBtn');
+const modal = document.getElementById('modal');
+const closeBtn = document.getElementById('closeBtn');
+const canvas = document.getElementById('scratchLayer');
+const ctx = canvas.getContext('2d');
+const scratchArea = document.querySelector('.scratch-area');
+
+function sizeCanvas(){ const rect = scratchArea.getBoundingClientRect(); canvas.width = Math.max(300, Math.floor(rect.width)); canvas.height = Math.max(200, Math.floor(rect.height)); }
+function initScratch(){ sizeCanvas(); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#bdbdbd'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.globalCompositeOperation='destination-out'; }
+
+let isDrawing=false;
+function getPos(e){ const rect = canvas.getBoundingClientRect(); const x = (e.touches?e.touches[0].clientX:e.clientX)-rect.left; const y = (e.touches?e.touches[0].clientY:e.clientY)-rect.top; return {x,y}; }
+function draw(e){ if(!isDrawing) return; const p=getPos(e); ctx.beginPath(); ctx.arc(p.x,p.y,24,0,Math.PI*2); ctx.fill(); }
+canvas.addEventListener('mousedown', ()=>{ isDrawing=true; draw(event); });
+window.addEventListener('mouseup', ()=>{ isDrawing=false; });
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('touchstart', (e)=>{ isDrawing=true; draw(e); e.preventDefault(); });
+canvas.addEventListener('touchmove', (e)=>{ draw(e); e.preventDefault(); });
+canvas.addEventListener('touchend', ()=>{ isDrawing=false; });
+
+function getClearedPercent(){ const imgData=ctx.getImageData(0,0,canvas.width,canvas.height).data; let cleared=0; for(let i=3;i<imgData.length;i+=4){ if(imgData[i]===0) cleared++; } return (cleared/(canvas.width*canvas.height))*100; }
+let checkInterval;
+function startChecking(){ checkInterval=setInterval(()=>{ if(getClearedPercent()>80){ ctx.clearRect(0,0,canvas.width,canvas.height); clearInterval(checkInterval); } },300); }
+
+openBtn.addEventListener('click', ()=>{ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); setTimeout(initScratch,10); startChecking(); });
+closeBtn.addEventListener('click', ()=>{ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); clearInterval(checkInterval); });
+modal.addEventListener('click',(e)=>{ if(e.target===modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); clearInterval(checkInterval); }});
+window.addEventListener('resize', ()=>{ if(modal.classList.contains('show')) initScratch(); });
+</script>
+
+</body>
+</html>
